@@ -59,7 +59,7 @@ class Person extends \Faker\Provider\Person
         'Adél', 'Alexa', 'Andrea', 'Angéla', 'Anikó', 'Beatrix', 'Bettina', 'Dalma', 'Dorina', 'Dorottya', 'Evelin', 'Fanni', 'Flóra', 'Gabriella',
         'Georgina', 'Gitta', 'Gizella', 'Gréta', 'Henrietta', 'Izabella', 'Johanna', 'Judit', 'Julianna', 'Jázmin', 'Kata', 'Katalin',
         'Katinka', 'Klaudia', 'Kíra', 'Liliána', 'Linda', 'Liza', 'Léna', 'Lívia', 'Maja', 'Marianna', 'Marietta', 'Martina',
-        'Mia', 'Milla', 'Mirella', 'Mária', 'Márton', 'Míra', 'Nikoletta', 'Olívia', 'Patrícia', 'Ramóna', 'Rebeka', 'Soma',
+        'Mia', 'Mila', 'Mirella', 'Mária', 'Márton', 'Míra', 'Nikoletta', 'Olívia', 'Patrícia', 'Ramóna', 'Rebeka', 'Soma',
         'Szandra', 'Sára', 'Valéria', 'Zita', 'Aranka', 'Boróka', 'Boglárka', 'Csenge', 'Emőke', 'Erzsébet', 'Hanga', 'Henriett',
         'Kincső', 'Panna', 'Szabina', 'Szonja', 'Virág', 'Zsóka',
     ];

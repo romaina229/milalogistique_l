@@ -1,4 +1,4 @@
-# 🚀 Milla Logistique - Application Laravel + React
+# 🚀 Mila Logistique - Application Laravel + React
 
 ## Analyse complète du projet existant & Migration
 

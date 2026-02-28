@@ -81,11 +81,11 @@ export default function HomePage() {
                                 <div className="relative bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
                                     <img
                                         src="/images/logomilla.jpeg"
-                                        alt="Milla Logistique"
+                                        alt="Mila Logistique"
                                         className="w-48 h-48 rounded-2xl object-cover shadow-xl"
                                     />
                                     <div className="text-center mt-4">
-                                        <div className="text-lg font-bold">Milla Logistique</div>
+                                        <div className="text-lg font-bold">Mila Logistique</div>
                                         <div className="text-blue-200 text-sm">Bénin 🇧🇯</div>
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@ export default function HomePage() {
             <section className="py-16 bg-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-900">Pourquoi choisir Milla Logistique ?</h2>
+                        <h2 className="text-3xl font-bold text-gray-900">Pourquoi choisir Mila Logistique ?</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {[

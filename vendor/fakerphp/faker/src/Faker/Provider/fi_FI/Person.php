@@ -45,7 +45,7 @@ class Person extends \Faker\Provider\Person
         'Janna', 'Janni', 'Jasmiina', 'Jenna', 'Jenni', 'Jessica', 'Johanna', 'Joni', 'Jonna', 'Julia', 'Juulia', 'Kaija',
         'Karla', 'Karri', 'Kati', 'Katja', 'Katri', 'Kia', 'Kimi', 'Kirsi', 'Krista', 'Lari', 'Laura', 'Lauri',
         'Lea', 'Lila', 'Linnea', 'Lotta', 'Lumina', 'Maarit', 'Maia', 'Maija', 'Maiju', 'Maisa', 'Mari', 'Maria',
-        'Meeri', 'Meri', 'Mette', 'Mia', 'Milla', 'Mimi', 'Mimosa', 'Minna', 'Mira', 'Mirella', 'Miska', 'Nadja',
+        'Meeri', 'Meri', 'Mette', 'Mia', 'Mila', 'Mimi', 'Mimosa', 'Minna', 'Mira', 'Mirella', 'Miska', 'Nadja',
         'Natalia', 'Nea', 'Neea', 'Nella', 'Nia', 'Niina', 'Noora', 'Olga', 'Olivia', 'Oona', 'Outi', 'Paula',
         'Pauliina', 'Petra', 'Pia', 'Piia', 'Pinja', 'Päivi', 'Reeta', 'Reetta', 'Riikka', 'Riina', 'Ritva', 'Roni',
         'Ronja', 'Sanna', 'Sari', 'Satu', 'Seija', 'Sirpa', 'Siru', 'Susanna', 'Tanja', 'Tara', 'Taru', 'Tea',

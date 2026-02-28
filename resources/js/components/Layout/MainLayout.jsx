@@ -28,11 +28,11 @@ export default function MainLayout() {
                         <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
                             <img
                                 src="/images/logomilla.jpeg"
-                                alt="Milla Logistique"
+                                alt="Mila Logistique"
                                 className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
                             />
                             <div className="text-white">
-                                <div className="font-bold text-lg leading-tight">Milla Logistique</div>
+                                <div className="font-bold text-lg leading-tight">Mila Logistique</div>
                                 <div className="text-xs text-blue-200 leading-tight">Documents professionnels</div>
                             </div>
                         </Link>
@@ -157,7 +157,7 @@ export default function MainLayout() {
                         <div>
                             <div className="flex items-center space-x-3 mb-4">
                                 <img src="/images/logomilla.jpeg" alt="Logo" className="w-10 h-10 rounded-full" />
-                                <span className="text-white font-bold text-lg">Milla Logistique</span>
+                                <span className="text-white font-bold text-lg">Mila Logistique</span>
                             </div>
                             <p className="text-sm text-gray-400 leading-relaxed">
                                 Votre plateforme de documents professionnels logistiques au Bénin.
@@ -181,7 +181,7 @@ export default function MainLayout() {
                         </div>
                     </div>
                     <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
-                        © {new Date().getFullYear()} Milla Logistique. Tous droits réservés.
+                        © {new Date().getFullYear()} Mila Logistique. Tous droits réservés.
                     </div>
                 </div>
             </footer>

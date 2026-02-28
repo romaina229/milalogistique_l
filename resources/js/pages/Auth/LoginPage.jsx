@@ -121,7 +121,7 @@ export function RegisterPage() {
                 <div className="text-center mb-8">
                     <img src="/images/logomilla.jpeg" alt="Logo" className="w-16 h-16 rounded-full mx-auto mb-4 shadow-md" />
                     <h1 className="text-3xl font-extrabold text-gray-900">Créer un compte</h1>
-                    <p className="text-gray-500 mt-1">Rejoignez Milla Logistique</p>
+                    <p className="text-gray-500 mt-1">Rejoignez Mila Logistique</p>
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">

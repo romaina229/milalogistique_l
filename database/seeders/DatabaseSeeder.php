@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['email' => 'milalogistique@gmail.com'],
             [
-                'name'     => 'Milla Logistique Admin',
+                'name'     => 'Mila Logistique Admin',
                 'password' => Hash::make('Admin123!'),
                 'phone'    => '+229 01 52 75 56 08',
                 'is_admin' => true,
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Admin: milalogistique@gmail.com / Admin123!');
 
         $settings = [
-            ['key' => 'site_name',        'value' => 'Milla Logistique'],
+            ['key' => 'site_name',        'value' => 'Mila Logistique'],
             ['key' => 'site_description', 'value' => 'Documents professionnels de logistique au Bénin'],
             ['key' => 'contact_email',    'value' => 'milalogistique@gmail.com'],
             ['key' => 'contact_phone',    'value' => '+229 01 52 75 56 08'],

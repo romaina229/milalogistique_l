@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Milla Logistique')</title>
+    <title>@yield('title', 'Mila Logistique')</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #333; }
@@ -44,8 +44,8 @@
 <body>
 <div class="wrapper">
     <div class="header">
-        <img src="{{ asset('images/logomilla.jpeg') }}" alt="Milla Logistique" onerror="this.style.display='none'">
-        <h1>Milla Logistique</h1>
+        <img src="{{ asset('images/logomilla.jpeg') }}" alt="Mila Logistique" onerror="this.style.display='none'">
+        <h1>Mila Logistique</h1>
         <p>Documents professionnels de logistique</p>
     </div>
 
@@ -55,7 +55,7 @@
 
     <div class="footer">
         <p>
-            © {{ date('Y') }} Milla Logistique — Cotonou, Bénin<br>
+            © {{ date('Y') }} Mila Logistique — Cotonou, Bénin<br>
             📞 +229 01 52 75 56 08 &nbsp;|&nbsp; ✉️ <a href="mailto:milalogistique@gmail.com">milalogistique@gmail.com</a>
         </p>
         <p style="margin-top:8px; color:#d1d5db; font-size:11px;">

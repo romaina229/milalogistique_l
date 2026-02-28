@@ -1,6 +1,6 @@
 @extends('layouts.email')
 
-@section('title', 'Confirmation de paiement — Milla Logistique')
+@section('title', 'Confirmation de paiement — Mila Logistique')
 
 @section('content')
 <h2>✅ Paiement confirmé !</h2>
@@ -52,5 +52,5 @@
 @endif
 
 <p>Merci de votre confiance !</p>
-<p style="margin-top:20px;">L'équipe <strong>Milla Logistique</strong></p>
+<p style="margin-top:20px;">L'équipe <strong>Mila Logistique</strong></p>
 @endsection

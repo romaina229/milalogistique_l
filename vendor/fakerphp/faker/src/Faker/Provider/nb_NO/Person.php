@@ -94,7 +94,7 @@ class Person extends \Faker\Provider\Person
         'Margrete', 'Margrethe', 'Marguerite', 'Margy', 'Mari', 'Maria', 'Marianne', 'Marie', 'Mariell', 'Marilyn',
         'Marina', 'Marion', 'Marit', 'Marlene', 'Marta', 'Marte', 'Martha', 'Martine', 'Mary', 'Mathea', 'Mathilde',
         'Maud', 'May', 'Maya', 'Maylen', 'Melanie', 'Melina', 'Melinda', 'Melissa', 'Melita', 'Mercedes', 'Merete',
-        'Mette', 'Mia', 'Michaela', 'Mildrid', 'Milena', 'Milla', 'Mille', 'Mina', 'Mira', 'Miranda', 'Miriam', 'Moa',
+        'Mette', 'Mia', 'Michaela', 'Mildrid', 'Milena', 'Mila', 'Mille', 'Mina', 'Mira', 'Miranda', 'Miriam', 'Moa',
         'Mona', 'Monica', 'Monika', 'Monja', 'Muna', 'Munira', 'My', 'Märta', 'Märtha', 'Møyfrid', 'Målfrid', 'Nada',
         'Nadia', 'Nadine', 'Nadja', 'Naima', 'Nancy', 'Nanna', 'Naomi', 'Nasreen', 'Nasrin', 'Natalie', 'Nathalie',
         'Nazia', 'Nelly', 'Ngoc', 'Nicole', 'Nikita', 'Niklas', 'Nikoline', 'Nimo', 'Nina', 'Noomi', 'Noor', 'Nor',

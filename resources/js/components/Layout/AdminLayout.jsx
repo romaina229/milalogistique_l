@@ -34,7 +34,7 @@ export default function AdminLayout() {
                     <img src="/images/logomilla.jpeg" alt="Logo" className="w-9 h-9 rounded-full flex-shrink-0" />
                     {sidebarOpen && (
                         <div>
-                            <div className="font-bold text-sm">Milla Admin</div>
+                            <div className="font-bold text-sm">Mila Admin</div>
                             <div className="text-xs text-blue-300">Administration</div>
                         </div>
                     )}

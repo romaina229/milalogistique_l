@@ -7,7 +7,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-            'http://localhost:3000',   // React
+            'http://localhost:3000', 'https://milalogistique.vercel.app',  // React
             'http://localhost:5173',   // Vite (port alternatif)
             env('FRONTEND_URL'),
     ],

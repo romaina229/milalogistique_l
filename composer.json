@@ -1,6 +1,6 @@
 {
     "name": "milla/logistique",
-    "description": "Milla Logistique - Plateforme de documents",
+    "description": "Mila Logistique - Plateforme de documents",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
