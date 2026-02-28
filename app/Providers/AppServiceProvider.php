@@ -11,11 +11,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Forcer HTTPS en production (Render, Heroku, etc.)
-        // Évite les liens http://localhost:8000 dans les réponses API
-        if (config('app.env') === 'production' || config('app.url') !== 'http://localhost:8000') {
+        URL::forceRootUrl(config('app.url'));
+
+        // Forcer HTTPS si APP_URL commence par https
+        if (str_starts_with(config('app.url'), 'https')) {
             URL::forceScheme('https');
-            URL::forceRootUrl(config('app.url'));
         }
     }
 }
