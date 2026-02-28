@@ -3,7 +3,7 @@
 /public/storage
 /storage/*.key
 INSTALL.md
-PAYEMENT_FIXES.md
+PAYMENT_FIXES.md
 .env
 .env.backup
 .env.production
