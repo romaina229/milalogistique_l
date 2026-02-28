@@ -7,16 +7,15 @@ use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
     public function boot(): void
     {
-        // Force HTTPS en production
-        if (config('app.env') === 'production') {
+        // Forcer HTTPS en production (Render, Heroku, etc.)
+        // Évite les liens http://localhost:8000 dans les réponses API
+        if (config('app.env') === 'production' || config('app.url') !== 'http://localhost:8000') {
             URL::forceScheme('https');
+            URL::forceRootUrl(config('app.url'));
         }
     }
 }
