@@ -22,7 +22,7 @@ class PaymentController extends Controller
      */
     private function downloadUrl(string $token): string
     {
-        $base = rtrim(env('FRONTEND_URL', config('app.url')), '/');
+        $base = rtrim(config('payment.frontend_url', config('app.url')), '/');
         return $base . '/download-success?token=' . $token;
     }
 

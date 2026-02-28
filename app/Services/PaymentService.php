@@ -320,13 +320,13 @@ class PaymentService
             $download = $transaction->download;
             if ($download && $download->isValid()) {
                 $result['download_token']   = $download->token;
-                $result['download_url']     = rtrim(env('FRONTEND_URL', config('app.url')), '/') . '/download-success?token=' . $download->token;
+                $result['download_url']     = rtrim(config('payment.frontend_url', config('app.url')), '/') . '/download-success?token=' . $download->token;
                 $result['download_expires'] = $download->expires_at->toISOString();
             } else {
                 // Régénérer si expiré
                 $token = $this->generateDownloadToken($transaction);
                 $result['download_token'] = $token;
-                $result['download_url']   = rtrim(env('FRONTEND_URL', config('app.url')), '/') . '/download-success?token=' . $token;
+                $result['download_url']   = rtrim(config('payment.frontend_url', config('app.url')), '/') . '/download-success?token=' . $token;
             }
             $result['document'] = [
                 'id'    => $transaction->document?->id,
