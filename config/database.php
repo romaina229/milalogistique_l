@@ -22,6 +22,18 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'pgsql' => [
+            'driver'   => 'pgsql',
+            'host'     => env('DB_HOST'),
+            'port'     => env('DB_PORT', '6543'),
+            'database' => env('DB_DATABASE', 'postgres'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => env('DB_SCHEMA', 'mila_logistique'),
+            'sslmode'  => 'require',
+        ],
     ],
     'migrations' => [
         'table'                  => 'migrations',
