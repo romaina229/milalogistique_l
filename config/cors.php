@@ -7,7 +7,11 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+<<<<<<< HEAD
             'http://localhost:3000', 'https://milalogistique.vercel.app',  // React
+=======
+            'https://milalogistique.vercel.app/',   // React
+>>>>>>> 5a8754d3782944a97d2f6af19f3142536511227b
             'http://localhost:5173',   // Vite (port alternatif)
             env('FRONTEND_URL'),
     ],
