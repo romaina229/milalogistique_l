@@ -73,3 +73,40 @@ Route::prefix('admin')
         // Categories CRUD
         Route::apiResource('/categories', \App\Http\Controllers\Admin\AdminCategoryController::class);
     });
+
+// Régénérer lien de téléchargement (utilisateur)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/my-documents/{transactionId}/regenerate-link', function ($transactionId) {
+        $user = auth()->user();
+        $transaction = \App\Models\Transaction::where('id', $transactionId)
+            ->where('user_id', $user->id)
+            ->where('status', 'paid')
+            ->firstOrFail();
+
+        $paymentService = app(\App\Services\PaymentService::class);
+
+        // Invalider l'ancien token
+        \App\Models\Download::where('transaction_id', $transaction->id)->delete();
+
+        // Générer un nouveau token
+        $token = $paymentService->generateDownloadToken($transaction);
+
+        return response()->json([
+            'success' => true,
+            'download_token' => $token,
+            'message' => 'Nouveau lien généré avec succès',
+        ]);
+    });
+});
+
+// Routes Admin supplémentaires
+Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
+    // CRUD Utilisateurs
+    Route::put('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'update']);
+    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy']);
+    Route::patch('/users/{user}/toggle', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggle']);
+    Route::get('/users/{user}/downloads', [\App\Http\Controllers\Admin\AdminUserController::class, 'downloads']);
+
+    // Régénérer lien admin
+    Route::post('/transactions/{transaction}/regenerate-link', [\App\Http\Controllers\Admin\AdminUserController::class, 'regenerateLink']);
+});
