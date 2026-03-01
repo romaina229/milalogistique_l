@@ -76,27 +76,9 @@ Route::prefix('admin')
 
 // Régénérer lien de téléchargement (utilisateur)
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/my-documents/{transactionId}/regenerate-link', function ($transactionId) {
-        $user = auth()->user();
-        $transaction = \App\Models\Transaction::where('id', $transactionId)
-            ->where('user_id', $user->id)
-            ->where('status', 'paid')
-            ->firstOrFail();
-
-        $paymentService = app(\App\Services\PaymentService::class);
-
-        // Invalider l'ancien token
-        \App\Models\Download::where('transaction_id', $transaction->id)->delete();
-
-        // Générer un nouveau token
-        $token = $paymentService->generateDownloadToken($transaction);
-
-        return response()->json([
-            'success' => true,
-            'download_token' => $token,
-            'message' => 'Nouveau lien généré avec succès',
-        ]);
-    });
+    Route::post('/my-documents/{transactionId}/regenerate-link',
+        [\App\Http\Controllers\Api\DownloadController::class, 'regenerateLink']
+    );
 });
 
 // Routes Admin supplémentaires

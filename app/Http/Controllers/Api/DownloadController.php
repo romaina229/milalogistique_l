@@ -4,15 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Download;
+use App\Models\Transaction;
+use App\Services\PaymentService;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadController extends Controller
 {
     /**
      * GET /download/{token}
-     * Télécharger un fichier via token sécurisé
      */
     public function download(string $token): mixed
     {
@@ -41,19 +43,16 @@ class DownloadController extends Controller
             return response()->json(['error' => 'Document non trouvé'], 404);
         }
 
-        // Enregistrer le téléchargement
         $download->update([
             'downloaded_at' => now(),
             'ip_address'    => request()->ip(),
             'user_agent'    => request()->userAgent(),
         ]);
 
-        // Google Drive ou autre URL externe
         if ($document->file_type === 'drive' || filter_var($document->file_path, FILTER_VALIDATE_URL)) {
             return redirect($document->file_path);
         }
 
-        // Fichier local
         $filePath = $document->file_path;
 
         if (!Storage::exists($filePath)) {
@@ -73,9 +72,8 @@ class DownloadController extends Controller
 
     /**
      * GET /api/downloads/info/{token}
-     * Informations sur un lien de téléchargement
      */
-    public function info(string $token): \Illuminate\Http\JsonResponse
+    public function info(string $token): JsonResponse
     {
         $download = Download::where('token', $token)
             ->with(['document', 'transaction'])
@@ -93,6 +91,31 @@ class DownloadController extends Controller
                 'id'    => $download->document->id,
                 'title' => $download->document->title,
             ] : null,
+        ]);
+    }
+
+    /**
+     * POST /api/my-documents/{transactionId}/regenerate-link
+     */
+    public function regenerateLink(string $transactionId): JsonResponse
+    {
+        $user = Auth::user();
+
+        $transaction = Transaction::where('id', $transactionId)
+            ->where('user_id', $user->id)
+            ->where('status', 'paid')
+            ->firstOrFail();
+
+        // Supprimer l'ancien token
+        Download::where('transaction_id', $transaction->id)->delete();
+
+        // Générer nouveau token
+        $token = app(PaymentService::class)->generateDownloadToken($transaction);
+
+        return response()->json([
+            'success'        => true,
+            'download_token' => $token,
+            'message'        => 'Nouveau lien généré avec succès',
         ]);
     }
 }

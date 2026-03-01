@@ -14,6 +14,10 @@ use App\Http\Controllers\Api\DownloadController;
 // Route de téléchargement (token 72h)
 Route::get('/download/{token}', [DownloadController::class, 'download'])
     ->name('download.file');
+    
+Route::get('/manifest.webmanifest', function () {
+    return response()->file(public_path('manifest.webmanifest'));
+})->withoutMiddleware(['auth']);
 
 // Page d'accueil = JSON info (plus de vue Blade/Vite)
 Route::get('/', function () {
