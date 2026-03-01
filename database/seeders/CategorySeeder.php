@@ -20,6 +20,8 @@ class CategorySeeder extends Seeder
              'description' => 'Textes réglementaires, directives et protocoles CEDEAO'],
             ['name' => 'Formulaires Officiels',   'color' => '#d97706', 'order' => 5,
              'description' => 'Formulaires des administrations béninoises et régionales'],
+            ['name' => 'Formation',   'color' => '#42d906', 'order' => 6,
+             'description' => 'Formation sur les différentes thématiques de gestion de stock et ERPSAP'],
         ];
 
         foreach ($categories as $cat) {
