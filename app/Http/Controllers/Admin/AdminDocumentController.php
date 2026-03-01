@@ -70,7 +70,7 @@ class AdminDocumentController extends Controller
             'price'       => 'required|numeric|min:0',
             'category_id' => 'nullable|exists:categories,id',
             'tags'        => 'nullable|string',
-            'is_active'   => 'boolean',
+            'is_active' => 'nullable|in:0,1,true,false',
         ]);
 
         $data = $request->only(['title', 'description', 'price', 'category_id', 'category', 'tags', 'is_active']);
