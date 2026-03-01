@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentConfirmation;
 
+
 class PaymentService
 {
     /**
@@ -113,7 +114,7 @@ class PaymentService
         // Si paiement réussi, générer le token de téléchargement
         if ($newStatus === 'paid') {
             $downloadToken = $this->generateDownloadToken($transaction);
-            $this->sendPaymentConfirmationEmail($transaction, $downloadToken);
+            $this->sendConfirmationEmail($transaction, $downloadToken);
         }
 
         return [
@@ -203,7 +204,7 @@ class PaymentService
 
         if ($newStatus === 'paid') {
             $downloadToken = $this->generateDownloadToken($transaction);
-            $this->sendPaymentConfirmationEmail($transaction, $downloadToken);
+            $this->sendConfirmationEmail($transaction, $downloadToken);
         }
 
         Log::channel('payments')->info('KKiaPay: transaction traitée', [
@@ -366,7 +367,7 @@ class PaymentService
     /**
      * Envoyer email de confirmation avec lien de téléchargement
      */
-    private function sendPaymentConfirmationEmail(Transaction $transaction, string $downloadToken): void
+    public function sendConfirmationEmail(Transaction $transaction, string $downloadToken): void
     {
         try {
             $transaction->load(['user', 'document']);

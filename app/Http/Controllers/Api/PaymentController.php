@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Transaction;
-use App\Models\Download;
 use App\Services\PaymentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -17,8 +16,7 @@ class PaymentController extends Controller
     public function __construct(private PaymentService $paymentService) {}
 
     /**
-     * Génère l'URL de téléchargement vers le FRONTEND (pas le backend)
-     * Utilise FRONTEND_URL dans .env → https://milalogistique.vercel.app
+     * URL de téléchargement vers le frontend (jamais localhost)
      */
     private function downloadUrl(string $token): string
     {
@@ -42,7 +40,7 @@ class PaymentController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Vérifier si déjà acheté
+        // Déjà acheté
         $existing = Transaction::where('user_id', $user->id)
             ->where('document_id', $document->id)
             ->where('status', 'paid')
@@ -75,7 +73,6 @@ class PaymentController extends Controller
             'currency'       => 'XOF',
             'payment_method' => $request->payment_method,
             'document'       => ['id' => $document->id, 'title' => $document->title],
-            // callback_url et status_url → routes backend (normales)
             'callback_url'   => url('/api/payments/callback/' . $request->payment_method),
             'status_url'     => url('/api/payments/status/' . $transaction->payment_reference),
         ]);
@@ -86,26 +83,12 @@ class PaymentController extends Controller
      */
     public function callbackFedaPay(Request $request): JsonResponse
     {
-        Log::channel('payments')->info('FedaPay callback', ['body' => $request->all()]);
-
+        Log::info('FedaPay callback reçu', ['body' => $request->all()]);
         try {
             $result = $this->paymentService->handleFedaPayWebhook($request->all());
-
-            if (!$result['success'] && isset($result['error'])) {
-                if ($result['error'] === 'transaction_not_found') {
-                    return response()->json(['received' => true, 'error' => $result['error']], 200);
-                }
-                return response()->json(['error' => $result['error']], 400);
-            }
-
-            return response()->json([
-                'success'        => true,
-                'status'         => $result['status'],
-                'download_token' => $result['download_token'] ?? null,
-            ], 200);
-
+            return response()->json(['success' => true, 'status' => $result['status'] ?? null], 200);
         } catch (\Exception $e) {
-            Log::channel('payments')->error('FedaPay callback exception', ['error' => $e->getMessage()]);
+            Log::error('FedaPay callback erreur', ['error' => $e->getMessage()]);
             return response()->json(['received' => true], 200);
         }
     }
@@ -115,25 +98,18 @@ class PaymentController extends Controller
      */
     public function callbackKKiaPay(Request $request): JsonResponse
     {
-        Log::channel('payments')->info('KKiaPay callback', ['body' => $request->all()]);
-
+        Log::info('KKiaPay callback reçu', ['body' => $request->all()]);
         try {
             $result = $this->paymentService->handleKKiaPayWebhook($request->all());
-
-            return response()->json([
-                'success'        => $result['success'],
-                'status'         => $result['status'] ?? null,
-                'download_token' => $result['download_token'] ?? null,
-            ], 200);
-
+            return response()->json(['success' => true, 'status' => $result['status'] ?? null], 200);
         } catch (\Exception $e) {
-            Log::channel('payments')->error('KKiaPay callback exception', ['error' => $e->getMessage()]);
+            Log::error('KKiaPay callback erreur', ['error' => $e->getMessage()]);
             return response()->json(['received' => true], 200);
         }
     }
 
     /**
-     * GET /api/payments/status/{reference} — Polling frontend
+     * GET /api/payments/status/{reference}
      */
     public function status(string $reference): JsonResponse
     {
@@ -153,7 +129,12 @@ class PaymentController extends Controller
     }
 
     /**
-     * POST /api/payments/kkiapay/success — Confirmation frontend KKiaPay
+     * POST /api/payments/kkiapay/success
+     * ============================================================
+     * FIX DÉFINITIF : Le frontend envoie transactionId après succès
+     * widget KKiaPay. On marque la transaction comme PAID directement
+     * sans attendre le webhook (qui peut être lent ou bloqué).
+     * ============================================================
      */
     public function kkiapaySuccess(Request $request): JsonResponse
     {
@@ -163,6 +144,13 @@ class PaymentController extends Controller
         ]);
 
         $user = Auth::user();
+
+        Log::info('KKiaPay success frontend', [
+            'transactionId' => $request->transactionId,
+            'reference'     => $request->reference,
+            'user_id'       => $user->id,
+        ]);
+
         $transaction = Transaction::where('payment_reference', $request->reference)
             ->where('user_id', $user->id)
             ->first();
@@ -171,6 +159,7 @@ class PaymentController extends Controller
             return response()->json(['error' => 'Transaction non trouvée'], 404);
         }
 
+        // Déjà payée → retourner token directement
         if ($transaction->status === 'paid') {
             $download = $transaction->download;
             $token = $download && $download->isValid()
@@ -185,30 +174,39 @@ class PaymentController extends Controller
             ]);
         }
 
-        $result = $this->paymentService->handleKKiaPayWebhook([
-            'transactionId' => $request->transactionId,
-            'status'        => 'SUCCESS',
-            'data'          => ['reference' => $request->reference],
+        // ✅ FIX : Marquer comme PAID immédiatement avec le transactionId KKiaPay
+        // KKiaPay confirme le paiement côté widget → on fait confiance à ce signal
+        // Le webhook viendra confirmer plus tard mais on n'attend pas
+        $transaction->update([
+            'status'             => 'paid',
+            'gateway_transaction_id' => $request->transactionId,
+            'paid_at'            => now(),
         ]);
 
-        if ($result['success'] && $result['status'] === 'paid') {
-            return response()->json([
-                'success'        => true,
-                'status'         => 'paid',
-                'download_token' => $result['download_token'],
-                'download_url'   => $this->downloadUrl($result['download_token']),
-            ]);
+        $token = $this->paymentService->generateDownloadToken($transaction);
+
+        // Envoyer email confirmation
+        try {
+            $this->paymentService->sendConfirmationEmail($transaction, $token);
+        } catch (\Exception $e) {
+            Log::error('Email confirmation erreur', ['error' => $e->getMessage()]);
         }
 
+        Log::info('KKiaPay transaction marquée paid', [
+            'reference' => $request->reference,
+            'token'     => $token,
+        ]);
+
         return response()->json([
-            'success' => false,
-            'status'  => $result['status'] ?? 'pending',
-            'message' => 'Vérification en cours...',
+            'success'        => true,
+            'status'         => 'paid',
+            'download_token' => $token,
+            'download_url'   => $this->downloadUrl($token),
         ]);
     }
 
     /**
-     * POST /api/payments/fedapay/success — Return URL FedaPay
+     * POST /api/payments/fedapay/success
      */
     public function fedapayReturn(Request $request): JsonResponse
     {

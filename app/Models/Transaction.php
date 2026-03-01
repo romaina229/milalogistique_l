@@ -12,12 +12,13 @@ class Transaction extends Model
     protected $fillable = [
         'user_id', 'document_id', 'amount', 'status',
         'payment_method', 'operator', 'payment_reference',
-        'external_reference', 'phone', 'email', 'payment_data',
+        'external_reference', 'gateway_transaction_id', 'phone', 'email', 'payment_data', 'paid_at',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'payment_data' => 'array',
+        'paid_at'      => 'datetime',
     ];
 
     public function user()
