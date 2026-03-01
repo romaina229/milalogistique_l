@@ -279,7 +279,7 @@ class PaymentService
         }
 
         $token     = Str::random(64);
-        $expiresAt = now()->addHours(config('payment.download_expiry_hours', 72));
+        $expiresAt = now()->addHours((int) config('payment.download_expiry_hours', 72));
 
         Download::create([
             'transaction_id' => $transaction->id,
