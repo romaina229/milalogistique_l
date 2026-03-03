@@ -380,4 +380,71 @@ class PaymentService
             Log::error('Erreur envoi email confirmation', ['error' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Initialiser un paiement PaiementPro
+     * Retourne une URL de redirection vers la page de paiement
+     */
+    public function initiatePaiementPro(Transaction $transaction, array $customerData): array
+    {
+        $data = [
+            'merchantId'          => config('payment.paiementpro.merchant_id'),
+            'amount'              => (int) $transaction->amount,
+            'description'         => 'Achat document - ' . ($transaction->document?->title ?? 'Milla Logistique'),
+            'channel'             => 'CARD', // CARD, ORANGE_MONEY, MTN_MONEY, MOOV_MONEY
+            'countryCurrencyCode' => '952',  // XOF
+            'referenceNumber'     => $transaction->payment_reference,
+            'customerEmail'       => $customerData['email'],
+            'customerFirstName'   => $customerData['first_name'] ?? 'Client',
+            'customerLastname'    => $customerData['last_name']  ?? 'Milla',
+            'customerPhoneNumber' => $customerData['phone'] ?? '00000000',
+            'notificationURL'     => url('/api/payments/callback/paiementpro'),
+            'returnURL'           => url('/api/payments/paiementpro/return'),
+            'returnContext'       => json_encode(['reference' => $transaction->payment_reference]),
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, config('payment.paiementpro.init_url'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json; charset=utf-8']);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $result = json_decode($response, true);
+
+        if (!$result || !$result['success']) {
+            Log::error('PaiementPro init failed', ['response' => $result]);
+            return ['success' => false, 'error' => $result['message'] ?? 'Erreur initialisation'];
+        }
+
+        return ['success' => true, 'payment_url' => $result['url']];
+    }
+
+    /**
+     * Vérifier le retour PaiementPro après paiement
+     * responsecode = 0 → succès, responsecode = -1 → échec
+     */
+    public function handlePaiementProReturn(array $data): array
+    {
+        $reference    = $data['referenceNumber'] ?? null;
+        $responseCode = $data['responsecode']    ?? '-1';
+
+        if (!$reference) return ['success' => false, 'error' => 'reference_missing'];
+
+        $transaction = Transaction::where('payment_reference', $reference)->first();
+        if (!$transaction) return ['success' => false, 'error' => 'transaction_not_found'];
+
+        if ($responseCode === '0') {
+            $transaction->update(['status' => 'paid', 'paid_at' => now()]);
+            $token = $this->generateDownloadToken($transaction);
+            $this->sendConfirmationEmail($transaction, $token);
+            return ['success' => true, 'status' => 'paid', 'download_token' => $token];
+        }
+
+        $transaction->update(['status' => 'failed']);
+        return ['success' => false, 'status' => 'failed'];
+    }
 }

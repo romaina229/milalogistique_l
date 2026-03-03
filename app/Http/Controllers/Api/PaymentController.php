@@ -31,7 +31,7 @@ class PaymentController extends Controller
     {
         $request->validate([
             'document_id'    => 'required|exists:documents,id',
-            'payment_method' => 'required|in:fedapay,kkiapay',
+            'payment_method' => 'required|in:fedapay,kkiapay,paiementpro',
             'phone'          => 'nullable|string|max:20',
         ]);
 
@@ -229,5 +229,68 @@ class PaymentController extends Controller
         }
 
         return response()->json($result);
+    }
+
+    // ─── Et dans la méthode initiate(), après le bloc KKiaPay/FedaPay ───
+    // Ajouter dans le return response()->json([...]) :
+    // (après 'status_url')
+    //'payment_url' => null, // sera rempli par l'étape suivante pour paiementpro
+
+    /**
+     * POST /api/payments/paiementpro/init
+     * Initialise et retourne l'URL de redirection PaiementPro
+     */
+    public function paiementproInit(Request $request): JsonResponse
+    {
+        $request->validate(['reference' => 'required|string']);
+
+        $user        = Auth::user();
+        $transaction = Transaction::where('payment_reference', $request->reference)
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $result = $this->paymentService->initiatePaiementPro($transaction, [
+            'email'      => $user->email,
+            'first_name' => explode(' ', $user->name)[0] ?? 'Client',
+            'last_name'  => explode(' ', $user->name)[1] ?? 'Milla',
+            'phone'      => $user->phone ?? '00000000',
+        ]);
+
+        if (!$result['success']) {
+            return response()->json(['error' => $result['error']], 400);
+        }
+
+        return response()->json([
+            'success'     => true,
+            'payment_url' => $result['payment_url'], // si cela ne marche pas remplacer par null
+        ]);
+    }
+
+    /**
+     * GET /api/payments/paiementpro/return
+     * Retour après paiement PaiementPro (returnURL)
+     */
+    public function paiementproReturn(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $result    = $this->paymentService->handlePaiementProReturn($request->all());
+        $frontendUrl = rtrim(config('payment.frontend_url'), '/');
+
+        if ($result['success'] && isset($result['download_token'])) {
+            return redirect($frontendUrl . '/download-success?token=' . $result['download_token']);
+        }
+
+        $reference = $request->get('referenceNumber', '');
+        return redirect($frontendUrl . '/payment/status/' . $reference . '?method=paiementpro');
+    }
+
+    /**
+     * POST /api/payments/callback/paiementpro
+     * Webhook PaiementPro (notificationURL)
+     */
+    public function callbackPaiementPro(Request $request): JsonResponse
+    {
+        Log::info('PaiementPro callback', ['body' => $request->all()]);
+        $this->paymentService->handlePaiementProReturn($request->all());
+        return response()->json(['received' => true], 200);
     }
 }

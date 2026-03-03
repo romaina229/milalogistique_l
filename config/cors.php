@@ -8,7 +8,7 @@ return [
 
     'allowed_origins' => [
         // Production Vercel
-        'https://milalogistique.vercel.app',
+        'https://milalogistique.vercel.app', 'https://www.paiementpro.net',
         // Local développement
         'http://localhost:3000',
         'http://localhost:5173',

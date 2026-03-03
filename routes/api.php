@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
             ->name('payment.status');
         Route::post('/kkiapay/success', [PaymentController::class, 'kkiapaySuccess']);
         Route::post('/fedapay/return', [PaymentController::class, 'fedapayReturn']);
+        Route::post('/paiementpro/init', [PaymentController::class, 'paiementproInit']);
     });
 
     // Download info
@@ -58,6 +59,9 @@ Route::prefix('payments')->group(function () {
     Route::post('/callback/kkiapay', [PaymentController::class, 'callbackKKiaPay'])
         ->name('payment.callback.kkiapay')
         ->withoutMiddleware(['auth:sanctum', 'throttle:api']);
+    Route::get('/payments/paiementpro/return',   [PaymentController::class, 'paiementproReturn']);
+    Route::post('/callback/paiementpro', [PaymentController::class, 'callbackPaiementPro'])
+    ->withoutMiddleware(['auth:sanctum']);
 });
 
 // Admin routes

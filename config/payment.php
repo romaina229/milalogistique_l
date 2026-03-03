@@ -14,6 +14,12 @@ return [
         'env'         => env('KKIAPAY_ENV', 'live'),
     ],
 
+    'paiementpro' => [
+        'merchant_id' => env('PAIEMENTPRO_MERCHANT_ID'),
+        'env'         => env('PAIEMENTPRO_ENV', 'live'),
+        'init_url'    => 'https://www.paiementpro.net/webservice/onlinepayment/init/curl-init.php',
+    ],  
+
     'download_expiry_hours' => env('DOWNLOAD_EXPIRY_HOURS', 72),
 
     // URL frontend — utilisé pour générer les liens de téléchargement
