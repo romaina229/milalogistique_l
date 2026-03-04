@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DocumentController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\DownloadController;
 use App\Http\Controllers\Admin\AdminDocumentController;
+use App\Http\Controllers\Api\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +31,14 @@ Route::prefix('auth')->group(function () {
 Route::get('/documents', [DocumentController::class, 'index']);
 Route::get('/documents/{id}', [DocumentController::class, 'show']);
 Route::get('/categories', [DocumentController::class, 'categories']);
+// Contact (public)
+Route::post('/contact', [ContactController::class, 'store']);
 
 // Authenticated user routes
 Route::middleware('auth:sanctum')->group(function () {
     // My documents
     Route::get('/my-documents', [DocumentController::class, 'myDocuments']);
+     Route::get('/my-messages', [ContactController::class, 'myMessages']);
 
     // Payment routes
     Route::prefix('payments')->group(function () {
@@ -92,6 +96,12 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function ()
     Route::delete('/users/{user}', [\App\Http\Controllers\Admin\AdminUserController::class, 'destroy']);
     Route::patch('/users/{user}/toggle', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggle']);
     Route::get('/users/{user}/downloads', [\App\Http\Controllers\Admin\AdminUserController::class, 'downloads']);
+    // Contacts
+    Route::get('/contacts', [ContactController::class, 'index']);
+    Route::get('/contacts/{contact}', [ContactController::class, 'show']);
+    Route::post('/contacts/{contact}/reply', [ContactController::class, 'reply']);
+    Route::patch('/contacts/{contact}/status', [ContactController::class, 'updateStatus']);
+    Route::delete('/contacts/{contact}', [ContactController::class, 'destroy']);
 
     // Régénérer lien admin
     Route::post('/transactions/{transaction}/regenerate-link', [\App\Http\Controllers\Admin\AdminUserController::class, 'regenerateLink']);
